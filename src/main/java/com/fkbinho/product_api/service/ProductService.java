@@ -15,4 +15,5 @@ public interface ProductService {
 
     void deleteById(Long id);
 
+    ProductDTO update(Long id, ProductDTO dto);
 }

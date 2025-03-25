@@ -55,6 +55,16 @@ public class ProductServiceImpl implements ProductService {
         repository.deleteById(id);
     }
 
+    @Override
+    public ProductDTO update(Long id, ProductDTO productDTO) {
+        var entity = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        convertToEntity(productDTO, entity);
+        entity = repository.save(entity);
+        return new ProductDTO(entity);
+    }
+
     private void convertToEntity(ProductDTO productDTO, Product entity) {
         entity.setName(productDTO.getName());
         entity.setDescription(productDTO.getDescription());
