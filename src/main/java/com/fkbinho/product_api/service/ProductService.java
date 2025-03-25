@@ -1,6 +1,6 @@
 package com.fkbinho.product_api.service;
 
-import com.fkbinho.product_api.dto.ProductDTO;
+import com.fkbinho.product_api.controller.dto.ProductDTO;
 
 import java.util.List;
 

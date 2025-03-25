@@ -1,6 +1,6 @@
 package com.fkbinho.product_api.controller;
 
-import com.fkbinho.product_api.dto.ProductDTO;
+import com.fkbinho.product_api.controller.dto.ProductDTO;
 import com.fkbinho.product_api.service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -57,5 +57,4 @@ public class ProductController {
         var productUpdated = service.update(id, dto);
         return ResponseEntity.ok(productUpdated);
     }
-
 }

@@ -2,7 +2,7 @@ package com.fkbinho.product_api.service.impl;
 
 import com.fkbinho.product_api.domain.model.Product;
 import com.fkbinho.product_api.domain.repository.ProductRepository;
-import com.fkbinho.product_api.dto.ProductDTO;
+import com.fkbinho.product_api.controller.dto.ProductDTO;
 import com.fkbinho.product_api.service.ProductService;
 import com.fkbinho.product_api.service.exceptions.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
