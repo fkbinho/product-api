@@ -2,8 +2,10 @@ package com.fkbinho.product_api.service.impl;
 
 import com.fkbinho.product_api.domain.model.Product;
 import com.fkbinho.product_api.domain.repository.ProductRepository;
+import com.fkbinho.product_api.dto.ProductDTO;
 import com.fkbinho.product_api.service.ProductService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,23 +22,42 @@ public class ProductServiceImpl implements ProductService {
         this.repository = repository;
     }
 
+    @Transactional
     @Override
-    public Product save(Product product) {
-        return repository.save(product);
+    public ProductDTO save(ProductDTO productDTO) {
+        var entity = new Product();
+        convertToEntity(productDTO, entity);
+        entity = repository.save(entity);
+        return new ProductDTO(entity);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<ProductDTO> findAll() {
+        return repository.findAll()
+                .stream()
+                .map(ProductDTO::new)
+                .toList();
+    }
+
+
+    @Override
+    public Optional<ProductDTO> findById(Long id) {
+        return repository.findById(id)
+                .map(ProductDTO::new);
     }
 
     @Override
-    public List<Product> findAll() {
-        return repository.findAll();
-    }
-
-    @Override
-    public Optional<Product> findById(Long id) {
-        return repository.findById(id);
-    }
-
-    @Override
-    public void delete(Long id) {
+    public void deleteById(Long id) {
+        if (!repository.existsById(id)) {
+            throw new RuntimeException("Produto não encontrado para exclusão");
+        }
         repository.deleteById(id);
+    }
+
+    private void convertToEntity(ProductDTO productDTO, Product entity) {
+        entity.setName(productDTO.getName());
+        entity.setDescription(productDTO.getDescription());
+        entity.setPrice(productDTO.getPrice());
     }
 }

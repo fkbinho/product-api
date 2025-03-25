@@ -1,18 +1,18 @@
 package com.fkbinho.product_api.service;
 
-import com.fkbinho.product_api.domain.model.Product;
+import com.fkbinho.product_api.dto.ProductDTO;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface ProductService {
 
-    Product save(Product product);
+    ProductDTO save(ProductDTO productDTO);
 
-    List<Product> findAll();
+    List<ProductDTO> findAll();
 
-    Optional<Product> findById(Long id);
+    Optional<ProductDTO> findById(Long id);
 
-    void delete(Long id);
+    void deleteById(Long id);
 
 }
