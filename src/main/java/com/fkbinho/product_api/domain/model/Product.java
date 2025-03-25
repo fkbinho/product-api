@@ -1,9 +1,6 @@
 package com.fkbinho.product_api.domain.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class Product {
@@ -16,14 +13,18 @@ public class Product {
     private String description;
     private Double price;
 
+    @ManyToOne
+    private Category category;
+
     public Product() {
     }
 
-    public Product(Long id, String name, String description, Double price) {
+    public Product(Long id, String name, String description, Double price, Category category) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
+        this.category = category;
     }
 
     public Long getId() {
@@ -56,5 +57,13 @@ public class Product {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 }
