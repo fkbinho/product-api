@@ -4,11 +4,11 @@ import com.fkbinho.product_api.domain.model.Product;
 import com.fkbinho.product_api.domain.repository.ProductRepository;
 import com.fkbinho.product_api.dto.ProductDTO;
 import com.fkbinho.product_api.service.ProductService;
+import com.fkbinho.product_api.service.exceptions.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Camada de serviço responsável pela lógica de negócios relacionada aos produtos.
@@ -40,17 +40,18 @@ public class ProductServiceImpl implements ProductService {
                 .toList();
     }
 
-
+    @Transactional(readOnly = true)
     @Override
-    public Optional<ProductDTO> findById(Long id) {
-        return repository.findById(id)
-                .map(ProductDTO::new);
+    public ProductDTO findById(Long id) {
+        var entity = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product ID " + id + " not found"));
+        return new ProductDTO(entity);
     }
 
     @Override
     public void deleteById(Long id) {
         if (!repository.existsById(id)) {
-            throw new RuntimeException("Produto não encontrado para exclusão");
+            throw new ResourceNotFoundException("Product ID " + id + " not found");
         }
         repository.deleteById(id);
     }
@@ -58,7 +59,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDTO update(Long id, ProductDTO productDTO) {
         var entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product ID" + id + " not found"));
 
         convertToEntity(productDTO, entity);
         entity = repository.save(entity);

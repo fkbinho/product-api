@@ -42,10 +42,8 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductDTO> findById(@PathVariable Long id) {
-        var product = service.findById(id);
-        return product
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        var productDTO = service.findById(id);
+        return ResponseEntity.ok(productDTO);
     }
 
     @DeleteMapping("/{id}")
