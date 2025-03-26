@@ -65,7 +65,8 @@ public class ProductServiceImpl implements ProductService {
         try {
             repository.deleteById(id);
         } catch (DataIntegrityViolationException e) {
-            throw new DataIntegrityViolationException("Falha na integridade referencial.");
+            throw new DataIntegrityViolationException("Referential integrity failure. " +
+                                                      "Product ID " + id + " has associated entities");
         }
     }
 
