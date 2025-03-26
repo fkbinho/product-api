@@ -1,11 +1,15 @@
 package com.fkbinho.product_api.service.impl;
 
-import com.fkbinho.product_api.domain.model.Product;
-import com.fkbinho.product_api.domain.repository.ProductRepository;
 import com.fkbinho.product_api.controller.dto.ProductDTO;
+import com.fkbinho.product_api.domain.model.Category;
+import com.fkbinho.product_api.domain.model.Product;
+import com.fkbinho.product_api.domain.repository.CategoryRepository;
+import com.fkbinho.product_api.domain.repository.ProductRepository;
 import com.fkbinho.product_api.service.ProductService;
 import com.fkbinho.product_api.service.exceptions.ResourceNotFoundException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -17,9 +21,13 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository repository;
+    private final CategoryRepository categoryRepository;
 
-    public ProductServiceImpl(ProductRepository repository) {
+    public ProductServiceImpl(ProductRepository repository,
+                              CategoryServiceImpl categoryService,
+                              CategoryRepository categoryRepository) {
         this.repository = repository;
+        this.categoryRepository = categoryRepository;
     }
 
     @Transactional
@@ -48,14 +56,20 @@ public class ProductServiceImpl implements ProductService {
         return new ProductDTO(entity);
     }
 
+    @Transactional(propagation = Propagation.SUPPORTS)
     @Override
     public void deleteById(Long id) {
         if (!repository.existsById(id)) {
             throw new ResourceNotFoundException("Product ID " + id + " not found");
         }
-        repository.deleteById(id);
+        try {
+            repository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException("Falha na integridade referencial.");
+        }
     }
 
+    @Transactional
     @Override
     public ProductDTO update(Long id, ProductDTO productDTO) {
         var entity = repository.findById(id)
@@ -70,5 +84,11 @@ public class ProductServiceImpl implements ProductService {
         entity.setName(productDTO.getName());
         entity.setDescription(productDTO.getDescription());
         entity.setPrice(productDTO.getPrice());
+
+        Long categoryId = productDTO.getCategory().getId();
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria com ID " + categoryId + " não encontrada"));
+
+        entity.setCategory(category);
     }
 }
